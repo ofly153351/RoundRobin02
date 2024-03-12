@@ -18,6 +18,8 @@ class RRController {
         this.currentProcessIndex = 0;
         this.currentTime = 0;
         this.countClock = 0;
+        this.AVGTurnaround = 0;
+        this.AVGWaitting = 0;
         this.DeviceStatus = false;
         this.clockIntervalId = ClockFunction(clock => {
             this.clock = clock;
@@ -34,7 +36,28 @@ class RRController {
         };
         processInterval();
     }
+    calculateAvgWaitingTime() {
+        let totalWaitingTime = 0;
+        // หาผลรวมของ Waiting Time
+        this.TerminateList.forEach((process) => {
+            totalWaitingTime += process.waitingTime;
+        });
+        // หาค่าเฉลี่ยโดยการหารผลรวมด้วยจำนวนของกระบวนการใน terminateList
+        this.AVGWaitting = (totalWaitingTime / this.TerminateList.length).toFixed(2);
+    }
 
+    calculateAVGTurnaround() {
+        let totalTurnaroundTime = 0;
+        // หาผลรวมของ Turnaround Time
+        this.TerminateList.forEach((process) => {
+            // Turnaround Time เท่ากับ Burst Time บวกกับ Waiting Time
+            totalTurnaroundTime += process.burstTime + process.waitingTime;
+        });
+        // หาค่าเฉลี่ยโดยการหารผลรวมด้วยจำนวนของกระบวนการใน terminateList
+        this.AVGTurnaround = (
+            totalTurnaroundTime / this.TerminateList.length
+        ).toFixed(2);
+    }
 
     addProcess() {
         const processName = "Process" + this.countofProcess;
@@ -87,10 +110,8 @@ class RRController {
                 console.log("Terminate List:", this.TerminateList);
             }
             this.updateReadyQueue();
-
-            // console.log(this.ReadyQueue);
-            // this.calculateAvgWaitingTime();
-            // this.calculateAVGTurnaround();
+            this.calculateAvgWaitingTime();
+            this.calculateAVGTurnaround();
         }
     }
 
@@ -101,7 +122,6 @@ class RRController {
         const currentProcess = this.PcbList[this.currentProcessIndex];
         if (currentProcess) {
             // เพิ่มเวลาที่กระบวนการทำงาน
-            this.currentTime++;
             // ตรวจสอบสถานะของกระบวนการปัจจุบัน
             if (currentProcess.status === "New" && this.PcbList.length === 1) {
                 setTimeout(() => {
@@ -123,11 +143,12 @@ class RRController {
                 console.log("Running Process Index :" + this.currentProcessIndex);
                 // console.log(1%2);
             }
+            this.currentTime++;
             // กำหนดสถานะและเวลารอสำหรับกระบวนการอื่น ๆ ในรายการ
             this.PcbList.forEach((process, index) => {
                 if (index !== this.currentProcessIndex) {
                     if (process.status === "Waiting") {
-                        process.waitingTime++;
+                        process.waitingTime = process.waitingTime;
                     } else {
                         process.status = "Ready";
                         process.waitingTime++;
@@ -160,12 +181,13 @@ class RRController {
     addDevice() {
         if (this.DeviceStatus) {
             this.DeviceStatus = false;
-            // ค้นหา index ของตัวที่มี statusProcess เป็น "Running" ใน pcbList
+            // ค้นหา index ของตัวที่มี status เป็น "Running" ใน pcbList
             const runningIndex = this.PcbList.findIndex(
                 (element) => element.status === "Running"
             );
+            // ตรวจสอบว่ามีกระบวนการที่กำลังรันอยู่หรือไม่
             if (runningIndex !== -1) {
-                // สร้างอ็อบเจกต์ใหม่จากข้อมูลของตัวที่มี statusProcess เป็น "Running"
+                // สร้างอ็อบเจกต์ใหม่จากข้อมูลของตัวที่มี status เป็น "Running"
                 const runningProcess = { ...this.PcbList[runningIndex] };
                 // เปลี่ยนสถานะเป็น "Waiting" (หรือสถานะที่คุณต้องการ)
                 runningProcess.status = "Waiting";
@@ -177,10 +199,23 @@ class RRController {
                 this.DeviceList.push(runningProcess);
             }
         }
-            for (let i = 0; i < this.DeviceList.length; i++) {
-                this.DeviceList[i].waitingTime++;
+        // ตรวจสอบว่า DeviceList ไม่ว่างเปล่า และต้องเพิ่มเงื่อนไขนี้ด้วย
+        if (this.DeviceList.length > 0 && this.DeviceList[0].status !== "Running") {
+            // ให้ตั้งค่าสถานะของตัวแรกเป็น "Running"
+            this.DeviceList[0].status = "Running";
         }
+        // เพิ่ม Runtime ทุกๆ 1 วินาที
+        if (this.DeviceList.length > 0 && this.DeviceList[0].status === "Running") {
+            this.DeviceList[0].RunTime++;
+        }
+        // เพิ่ม ResponTime สำหรับกระบวนการที่มีสถานะเป็น "Waiting" ใน DeviceList
+        this.DeviceList.forEach((process, index) => {
+            if (index !== 0 && process.status === "Waiting") {
+                process.ResponTime++;
+            }
+        });
     }
+
 
     handleAddDevice() {
         if (this.PcbList.length === 0) {
@@ -190,12 +225,43 @@ class RRController {
         }
     }
 
-    get TerminateListt() {
-        return this.TerminateList
-    }
+    handleEndDevice() {
+        if (this.DeviceList.length <= 0) {
+            console.log("No Process !!!");
+        } else {
+            const waitingIndex = this.DeviceList.findIndex(
+                (element) => element.status === "Waiting"
+            );
+            const runningIndex = this.DeviceList.findIndex(
+                (element) => element.status === "Running"
+            );
 
-    get DeviceListt() {
-        return this.DeviceList
+            if (this.DeviceList.length === 1) {
+                // ถ้ามีแค่กระบวนการเดียวใน DeviceList
+                const process = this.DeviceList[0];
+                process.status = "Ready"; // กำหนดสถานะของกระบวนการใน DeviceList เป็น "Ready"
+                const matchingProcessIndex = this.PcbList.findIndex(
+                    (pcbProcess) => pcbProcess.processName === process.processName
+                );
+                if (matchingProcessIndex !== -1) {
+                    // หากพบกระบวนการที่ตรงกันใน PcbList
+                    this.PcbList[matchingProcessIndex].status = "Ready"; // กำหนดสถานะของกระบวนการใน PcbList เป็น "Ready"
+                }
+                // ลบกระบวนการที่อยู่ใน DeviceList
+                this.DeviceList.pop();
+            } else if (waitingIndex !== -1) {
+                // ถ้ามีกระบวนการที่มีสถานะเป็น "Waiting" ใน DeviceList
+                const waitingProcess = this.DeviceList.splice(waitingIndex, 1)[0];
+                waitingProcess.status = "Ready"; // กำหนดสถานะของกระบวนการใน DeviceList เป็น "Ready"
+                const matchingProcessIndex = this.PcbList.findIndex(
+                    (pcbProcess) => pcbProcess.processName === waitingProcess.processName
+                );
+                if (matchingProcessIndex !== -1) {
+                    // หากพบกระบวนการที่ตรงกันใน PcbList
+                    this.PcbList[matchingProcessIndex].status = "Ready"; // กำหนดสถานะของกระบวนการใน PcbList เป็น "Ready"
+                }
+            }
+        }
     }
 }
 

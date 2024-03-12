@@ -9,6 +9,8 @@ function View() {
     const [terminateList, setTerminateList] = useState([]);
     const [ReadyQueueList, setReadyQueueList] = useState([]);
     const [deviceList, setDeviceList] = useState([]);
+    const [quantumTime] = useState(rrController.quantumTime);
+    const [runningProcesses, setRunningProcesses] = useState([]);
 
     const AddProcess = () => {
         rrController.addProcess();
@@ -26,6 +28,9 @@ function View() {
         rrController.handleAddDevice();
     }
 
+    const EndDevice = () => {
+        rrController.handleEndDevice();
+    }
 
 
     useEffect(() => {
@@ -35,6 +40,7 @@ function View() {
             setTerminateList([...rrController.TerminateList]);
             setReadyQueueList([...rrController.ReadyQueue]);
             setDeviceList([...rrController.DeviceList]);
+            setRunningProcesses == rrController.Processrunning();
         }, 1000);
         return () => {
             clearInterval(interval);
@@ -44,15 +50,39 @@ function View() {
 
     return (
         <div className=''>
-            <div className="w-screen h-24 flex justify-around items-center bg-red-500 font-bold">
+            <div className="w-screen h-24 flex justify-around items-center bg-red-500 font-bold text-white">
                 <div className="text-3xl">Round Robin</div>
-                <div className="text-3xl">clock : {time} </div>
+                <>
+                    <div className="flex gap-10 text-purple-900">
+                        <div className="text-xl">Avg Waiting : {rrController.AVGWaitting}</div>
+                        <div className="text-xl">Avg Turnaround : {rrController.AVGTurnaround} </div>
+                        <div className="text-xl">CPU Process : {pcblist.map((item, index) => item.status === "Running" &&
+                        (
+                            <span key = {item.processName + index} >
+                                {item.processName}
+                            </span>
+                        ))}
+                         </div>
+                        <div className="text-xl">I/O Process : {deviceList.map((item, index) => item.status === "Running" && 
+                        (
+                            <span key = {item.processName + index}>
+                                {item.processName}
+                            </span>
+                        ))} </div>
+                    </div>
+                    <div className="text-3xl">clock : {time} </div>
+                </>
             </div>
             <div className="flex gap-10 ">
                 <div className='mt-10 ml-10 w-4/6 h-[740px] shadow-2xl'>
                     <div className="flex font-bold text-3xl bg-yellow-300 p-5 rounded-t-xl justify-between items-center">
-                        <div>
-                            <h1>PCB</h1>
+                        <div className='flex gap-10'>
+                            <>
+                                <h1>PCB</h1>
+                            </>
+                            <>
+                                <h1>QuantumTime : {quantumTime}</h1>
+                            </>
                         </div>
                         <div className='flex gap-2'>
                             <div>
@@ -130,7 +160,7 @@ function View() {
                                         <button onClick={AddDevice} type="button" className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">ADD</button>
                                     </div>
                                     <div>
-                                        <button type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">END</button>
+                                        <button onClick={EndDevice} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">END</button>
                                     </div>
 
                                 </div>
@@ -149,8 +179,8 @@ function View() {
                                         {deviceList.map((item, index) => (
                                             <tr key={index} className='text-sm '>
                                                 <td className='border-2 border-black p-2 '>{item.processName}</td>
-                                                <td className='border-2 border-black p-2 '>{item.arrivalTime}</td>
-                                                <td className='border-2 border-black p-2 '>{item.waitingTime}</td>
+                                                <td className='border-2 border-black p-2 '>{item.RunTime}</td>
+                                                <td className='border-2 border-black p-2 '>{item.ResponTime}</td>
                                                 <td className='border-2 border-black p-2 '>{item.status}</td>
                                             </tr>
                                         ))}
