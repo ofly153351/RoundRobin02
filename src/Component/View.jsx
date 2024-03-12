@@ -39,7 +39,6 @@ function View() {
             setTerminateList([...rrController.TerminateList]);
             setReadyQueueList([...rrController.ReadyQueue]);
             setDeviceList([...rrController.DeviceList]);
-            setRunningProcesses == rrController.Processrunning();
         }, 1000);
         return () => {
             clearInterval(interval);
