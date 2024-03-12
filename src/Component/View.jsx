@@ -10,7 +10,6 @@ function View() {
     const [ReadyQueueList, setReadyQueueList] = useState([]);
     const [deviceList, setDeviceList] = useState([]);
     const [quantumTime] = useState(rrController.quantumTime);
-    const [runningProcesses, setRunningProcesses] = useState([]);
 
     const AddProcess = () => {
         rrController.addProcess();
