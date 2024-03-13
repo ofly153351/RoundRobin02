@@ -17,7 +17,6 @@ class RRController {
         this.waitingCount = 0;
         this.currentProcessIndex = 0;
         this.currentTime = 0;
-        this.countClock = 0;
         this.AVGTurnaround = 0;
         this.AVGWaitting = 0;
         this.DeviceStatus = false;
@@ -29,7 +28,6 @@ class RRController {
 
     startProcess() {
         const processInterval = () => {
-            this.countClock++;
             this.process();
             // console.log("Ready List : ", this.ReadyQueue);
             setTimeout(processInterval, 1000);
@@ -80,14 +78,10 @@ class RRController {
         );
         this.PcbList.push(newProcess);
         this.countofProcess++;
-        setTimeout(() => {
-            this.countClock++;
-        }, 1000); // 1000 milliseconds = 1 วินาที
         console.log("pcb List :", this.PcbList);
         console.log("Device List : ", this.DeviceList);
 
     }
-
 
 
     Reset() {
@@ -132,6 +126,7 @@ class RRController {
                 currentProcess.burstTime++;
 
                 const indexInReadQueue = this.ReadyQueue.indexOf(currentProcess);
+                console.log(indexInReadQueue);
                 if (indexInReadQueue !== -1) {
                     this.ReadyQueue.splice(indexInReadQueue, 1);
                 }
@@ -141,9 +136,9 @@ class RRController {
                 this.currentProcessIndex = (this.currentProcessIndex + 1) % this.PcbList.length;
                 this.currentTime = 0;
                 console.log("Running Process Index :" + this.currentProcessIndex);
-                // console.log(1%2);
             }
             this.currentTime++;
+            // console.log("currentTime",this.currentTime);
             // กำหนดสถานะและเวลารอสำหรับกระบวนการอื่น ๆ ในรายการ
             this.PcbList.forEach((process, index) => {
                 if (index !== this.currentProcessIndex) {

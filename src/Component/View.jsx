@@ -76,7 +76,7 @@ function View() {
                     <div className="flex font-bold text-3xl bg-yellow-300 p-5 rounded-t-xl justify-between items-center">
                         <div className='flex gap-10'>
                             <>
-                                <h1>PCB</h1>
+                                <h1>Job Queue</h1>
                             </>
                             <>
                                 <h1>QuantumTime : {quantumTime}</h1>
@@ -108,7 +108,11 @@ function View() {
                             </thead>
                             <tbody>
                                 {pcblist.map((item, index) => (
-                                    <tr key={index} className='text-sm'>
+                                    <tr key={index} className={`text-sm ${item.status === "Running" ? 'bg-green-200' : ''} 
+                                                                        ${item.status  === "Ready" ? 'bg-yellow-200' : ''}
+                                                                        ${item.status === "New" ? 'bg-blue-200' : ''} 
+                                                                        ${item.status === "Waiting" ? 'bg-orange-200' : ''} 
+                                                                        `}>
                                         <td className='border-2 border-black p-2'>{item.processName}</td>
                                         <td className='border-2 border-black p-2'>{item.arrivalTime}</td>
                                         <td className='border-2 border-black p-2'>{item.quantumTime}</td>
