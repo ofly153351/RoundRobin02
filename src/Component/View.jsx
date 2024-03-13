@@ -57,18 +57,18 @@ function View() {
                         <div className="text-xl">Avg Waiting : {rrController.AVGWaitting}</div>
                         <div className="text-xl">Avg Turnaround : {rrController.AVGTurnaround} </div>
                         <div className="text-xl">CPU Process : {pcblist.map((item, index) => item.status === "Running" &&
-                        (
-                            <span key = {item.processName + index} >
-                                {item.processName}
-                            </span>
-                        ))}
-                         </div>
-                        <div className="text-xl">I/O Process : {deviceList.map((item, index) => item.status === "Running" && 
-                        (
-                            <span key = {item.processName + index}>
-                                {item.processName}
-                            </span>
-                        ))} </div>
+                            (
+                                <span key={item.processName + index} >
+                                    {item.processName}
+                                </span>
+                            ))}
+                        </div>
+                        <div className="text-xl">I/O Process : {deviceList.map((item, index) => item.status === "Running" &&
+                            (
+                                <span key={item.processName + index}>
+                                    {item.processName}
+                                </span>
+                            ))} </div>
                     </div>
                     <div className="text-3xl">clock : {time} </div>
                 </>
@@ -111,7 +111,7 @@ function View() {
                             <tbody>
                                 {pcblist.map((process, index) => (
                                     <tr key={index} className={`text-sm ${process.status === "Running" ? 'bg-green-200' : ''} 
-                                                                        ${process.status  === "Ready" ? 'bg-yellow-200' : ''}
+                                                                        ${process.status === "Ready" ? 'bg-yellow-200' : ''}
                                                                         ${process.status === "New" ? 'bg-blue-200' : ''} 
                                                                         ${process.status === "Waiting" ? 'bg-orange-200' : ''} 
                                                                         `}>
@@ -145,7 +145,7 @@ function View() {
                                     </thead>
                                     <tbody>
                                         {ReadyQueueList.map((item, index) => (
-                                            <tr key={index} className='text-sm '>
+                                            <tr key={index} className={`text-sm bg-yellow-200`}>
                                                 <td className='border-2 border-black p-2 '>{item.processName}</td>
                                                 <td className='border-2 border-black p-2 '>{item.arrivalTime}</td>
                                             </tr>
@@ -157,7 +157,7 @@ function View() {
                         <div className="mt-10  mr-10 shadow-2xl ">
                             <div className="flex font-bold text-3xl bg-yellow-300 p-5 rounded-t-xl justify-between items-center">
                                 <div>
-                                    <h1>IO Device</h1>
+                                    <h1>I/O Queue</h1>
                                 </div>
                                 <div className='flex gap-2'>
                                     <div>
@@ -181,7 +181,8 @@ function View() {
                                     </thead>
                                     <tbody>
                                         {deviceList.map((item, index) => (
-                                            <tr key={index} className='text-sm '>
+                                            <tr key={index} className={`text-sm ${item.status === "Running" ? 'bg-green-300' : ''}
+                                                                                ${item.status === "Waiting" ? 'bg-orange-300' : ''} `}>
                                                 <td className='border-2 border-black p-2 '>{item.processName}</td>
                                                 <td className='border-2 border-black p-2 '>{item.RunTime}</td>
                                                 <td className='border-2 border-black p-2 '>{item.ResponTime}</td>
@@ -216,7 +217,7 @@ function View() {
                             </thead>
                             <tbody>
                                 {terminateList.map((item, index) => (
-                                    <tr key={index} className='text-sm'>
+                                    <tr key={index} className={`text-sm ${item.status === "Terminate" ? 'bg-red-300' : ''} `}>
                                         <td className='border-2 border-black p-2'>{item.processName}</td>
                                         <td className='border-2 border-black p-2'>{item.arrivalTime}</td>
                                         <td className='border-2 border-black p-2'>{item.quantumTime}</td>

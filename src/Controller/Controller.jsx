@@ -58,7 +58,7 @@ class RRController {
     }
 
     addProcess() {
-        const processName = "Process" + this.countofProcess;
+        const processName = "Process " + this.countofProcess;
         const arrivalTime = this.clock;
         const quantumTime = this.quantumTime;
         const burstTime = 0;
