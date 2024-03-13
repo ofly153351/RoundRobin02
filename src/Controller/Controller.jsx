@@ -192,9 +192,6 @@ class RRController {
                 // เปลี่ยนสถานะเป็น "Waiting" (หรือสถานะที่คุณต้องการ)
                 runningProcess.status = "Waiting";
                 this.PcbList[runningIndex].status = "Waiting";
-                runningProcess.waitingTime = 0;
-                runningProcess.burstTime = 0;
-                runningProcess.arrivalTime = 0;
                 // เพิ่มอ็อบเจกต์ใหม่ลงใน deviceList
                 this.DeviceList.push(runningProcess);
             }
@@ -227,7 +224,7 @@ class RRController {
 
     handleEndDevice() {
         if (this.DeviceList.length <= 0) {
-            console.log("No Process !!!");
+            window.confirm("No Process !!!");
         } else {
             const runningIndex = this.DeviceList.findIndex(
                 (element) => element.status === "Running"
