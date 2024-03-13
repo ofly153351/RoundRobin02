@@ -229,32 +229,16 @@ class RRController {
         if (this.DeviceList.length <= 0) {
             console.log("No Process !!!");
         } else {
-            const waitingIndex = this.DeviceList.findIndex(
-                (element) => element.status === "Waiting"
-            );
             const runningIndex = this.DeviceList.findIndex(
                 (element) => element.status === "Running"
             );
-
-            if (this.DeviceList.length === 1) {
-                // ถ้ามีแค่กระบวนการเดียวใน DeviceList
-                const process = this.DeviceList[0];
-                process.status = "Ready"; // กำหนดสถานะของกระบวนการใน DeviceList เป็น "Ready"
+    
+            if (runningIndex !== -1) {
+                // ถ้ามีกระบวนการที่มีสถานะเป็น "Running" ใน DeviceList
+                const runningProcess = this.DeviceList.splice(runningIndex, 1)[0];
+                runningProcess.status = "Ready"; // กำหนดสถานะของกระบวนการใน DeviceList เป็น "Ready"
                 const matchingProcessIndex = this.PcbList.findIndex(
-                    (pcbProcess) => pcbProcess.processName === process.processName
-                );
-                if (matchingProcessIndex !== -1) {
-                    // หากพบกระบวนการที่ตรงกันใน PcbList
-                    this.PcbList[matchingProcessIndex].status = "Ready"; // กำหนดสถานะของกระบวนการใน PcbList เป็น "Ready"
-                }
-                // ลบกระบวนการที่อยู่ใน DeviceList
-                this.DeviceList.pop();
-            } else if (waitingIndex !== -1) {
-                // ถ้ามีกระบวนการที่มีสถานะเป็น "Waiting" ใน DeviceList
-                const waitingProcess = this.DeviceList.splice(waitingIndex, 1)[0];
-                waitingProcess.status = "Ready"; // กำหนดสถานะของกระบวนการใน DeviceList เป็น "Ready"
-                const matchingProcessIndex = this.PcbList.findIndex(
-                    (pcbProcess) => pcbProcess.processName === waitingProcess.processName
+                    (pcbProcess) => pcbProcess.processName === runningProcess.processName
                 );
                 if (matchingProcessIndex !== -1) {
                     // หากพบกระบวนการที่ตรงกันใน PcbList
@@ -263,6 +247,7 @@ class RRController {
             }
         }
     }
+    
 }
 
 
