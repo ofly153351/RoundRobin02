@@ -11,6 +11,8 @@ function View() {
     const [deviceList, setDeviceList] = useState([]);
     const [quantumTime] = useState(rrController.quantumTime);
 
+
+    //ปุ่มกด
     const AddProcess = () => {
         rrController.addProcess();
     }
@@ -107,18 +109,18 @@ function View() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {pcblist.map((item, index) => (
-                                    <tr key={index} className={`text-sm ${item.status === "Running" ? 'bg-green-200' : ''} 
-                                                                        ${item.status  === "Ready" ? 'bg-yellow-200' : ''}
-                                                                        ${item.status === "New" ? 'bg-blue-200' : ''} 
-                                                                        ${item.status === "Waiting" ? 'bg-orange-200' : ''} 
+                                {pcblist.map((process, index) => (
+                                    <tr key={index} className={`text-sm ${process.status === "Running" ? 'bg-green-200' : ''} 
+                                                                        ${process.status  === "Ready" ? 'bg-yellow-200' : ''}
+                                                                        ${process.status === "New" ? 'bg-blue-200' : ''} 
+                                                                        ${process.status === "Waiting" ? 'bg-orange-200' : ''} 
                                                                         `}>
-                                        <td className='border-2 border-black p-2'>{item.processName}</td>
-                                        <td className='border-2 border-black p-2'>{item.arrivalTime}</td>
-                                        <td className='border-2 border-black p-2'>{item.quantumTime}</td>
-                                        <td className='border-2 border-black p-2'>{item.burstTime}</td>
-                                        <td className='border-2 border-black p-2'>{item.waitingTime}</td>
-                                        <td className='border-2 border-black p-2'>{item.status}</td>
+                                        <td className='border-2 border-black p-2'>{process.processName}</td>
+                                        <td className='border-2 border-black p-2'>{process.arrivalTime}</td>
+                                        <td className='border-2 border-black p-2'>{process.quantumTime}</td>
+                                        <td className='border-2 border-black p-2'>{process.burstTime}</td>
+                                        <td className='border-2 border-black p-2'>{process.waitingTime}</td>
+                                        <td className='border-2 border-black p-2'>{process.status}</td>
                                     </tr>
                                 ))}
                             </tbody>
