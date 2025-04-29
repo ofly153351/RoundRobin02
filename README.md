@@ -5,16 +5,21 @@ This project is a simple Round Robin task assignment system built using Vite and
 ⸻
 
 ⚙️ Features
-	•	Assigns tasks/events using the Round Robin algorithm
-	•	Displays list of users and assigned tasks
-	•	Lightweight and fast thanks to Vite
-	•	Easy to extend or integrate with backend APIs
+	
+ •	Assigns tasks/events using the Round Robin algorithm
+	
+ •	Displays list of users and assigned tasks
+	
+ •	Lightweight and fast thanks to Vite
+	
+ •	Easy to extend or integrate with backend APIs
 
 ⸻
 
 🚀 Try It Yourself
 
 To try the app locally:
+
 git clone https://github.com/ofly153351/RoundRobin02.git
 cd round-robin-app
 npm install
