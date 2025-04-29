@@ -15,7 +15,7 @@ This project is a simple Round Robin task assignment system built using Vite and
 🚀 Try It Yourself
 
 To try the app locally:
-git clone https://github.com/your-username/round-robin-app.git
+git clone https://github.com/ofly153351/RoundRobin02.git
 cd round-robin-app
 npm install
 npm run dev
